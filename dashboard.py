@@ -115,8 +115,6 @@ if not data.empty:
             st.markdown('<div class="chart-box">', unsafe_allow_html=True)
             st.plotly_chart(create_chart(data, field, color), use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
-
-    st.markdown("<h2>🌟 Live Updates Every 60 Seconds</h2>", unsafe_allow_html=True)
 else:
     st.warning("No data available. Please refresh.")
 
