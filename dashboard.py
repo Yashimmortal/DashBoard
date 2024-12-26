@@ -123,7 +123,7 @@ st.markdown(
     """
     <hr>
     <div style="text-align: center;">
-        <p style="color: #FFD700;">Built with ❤️ using Streamlit</p>
+        <p style="color: #FFD700;">Built By Yash Choudhary</p>
     </div>
     """,
     unsafe_allow_html=True,
