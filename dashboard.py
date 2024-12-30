@@ -51,27 +51,28 @@ st.markdown(
 )
 
 
-def fetch_real_time_data():# fetching data from API
-    api_url = "https://api.thingspeak.com/channels/1596152/feeds.json?results=5"
-    response = requests.get(api_url)
+def fetch_real_time_data():
+    url = "https://api.thingspeak.com/channels/1596152/feeds.json?results=5"
+    response = requests.get(url)
     if response.status_code == 200:
-        data = response.json()
-        feeds = data.get("feeds", [])
-        records = []
-        for feed in feeds:
-            records.append({
-                "created_at": pd.to_datetime(feed.get("created_at")),
-                "PM2.5": float(feed.get("field1", 0)),
-                "PM10": float(feed.get("field2", 0)),
-                "Ozone": float(feed.get("field3", 0)),
-                "Humidity": float(feed.get("field4", 0)),
-                "Temperature": float(feed.get("field5", 0)),
-                "CO": float(feed.get("field6", 0)),
-            })
-        return pd.DataFrame(records)
+        data = response.json()["feeds"]
+        df = pd.DataFrame(data)
+        df["created_at"] = pd.to_datetime(df["created_at"], errors="coerce")
+        df["PM2.5"] = pd.to_numeric(df["field1"], errors="coerce")
+        df["PM10"] = pd.to_numeric(df["field2"], errors="coerce")
+        df["Ozone"] = pd.to_numeric(df["field3"], errors="coerce")
+        df["Humidity"] = pd.to_numeric(df["field4"], errors="coerce")
+        df["Temperature"] = pd.to_numeric(df["field5"], errors="coerce")
+        df["CO"] = pd.to_numeric(df["field6"], errors="coerce")
+
+        # Drop rows with NaN values
+        df = df.dropna(subset=["PM2.5", "PM10", "Ozone", "Humidity", "Temperature", "CO", "created_at"])
+
+        return df
     else:
-        st.error("Failed to fetch data from API.")
+        st.error("Failed to fetch data. Please check the API.")
         return pd.DataFrame()
+
 
 
 def create_chart(df, field, color):# for chart creation
